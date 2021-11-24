@@ -19,19 +19,16 @@ client.once('ready', async () => {
   textChannel = channel as TextChannel;
 
   // Start Information Interval
-  const INTERVAL_TIME_ONE_HOUR = 3600000
-  const interval = setInterval(
-    update,
-    INTERVAL_TIME_ONE_HOUR,
-  );
+  const INTERVAL_TIME_ONE_HOUR = 3600000;
+  const interval = setInterval(update, INTERVAL_TIME_ONE_HOUR);
 });
 
 function createEmbedMessage(data: Information) {
-  const activePlayers = data.characters.map((character) => {
-    return (
-      `${character.name} (${character.profession}) \n Level: ${character.level} Deaths: ${character.deaths} \n\n`
-    )
-  }).join(""); 
+  const activePlayers = data.characters
+    .map((character) => {
+      return `${character.name} (${character.profession}) \n Level: ${character.level} Deaths: ${character.deaths} \n\n`;
+    })
+    .join('');
   return new MessageEmbed()
     .setTitle(`${data.guild.name} [${data.guild.tag}]`)
     .setColor('#DAF7A6')
@@ -39,7 +36,7 @@ function createEmbedMessage(data: Information) {
       { name: 'Message of the day', value: data.guild.motd },
       { name: 'Level', value: data.guild.level.toString() },
       { name: 'Members', value: data.guild.member_count.toString() },
-      { name: 'Active Players', value: activePlayers}
+      { name: 'Active Players', value: activePlayers },
     );
 }
 
@@ -69,11 +66,13 @@ async function getGuildEmblem() {
   //TODO: Show Guild Emblem on Discord
 }
 
-const characterUrl = `https://api.guildwars2.com/v2/characters?ids=all`
+const characterUrl = `https://api.guildwars2.com/v2/characters?ids=all`;
 async function getCharacterInfo(token: string): Promise<Character[]> {
   //TODO: Get Character Info
   try {
-    const response = await axios.get<Character[]>(`${characterUrl}&access_token=${token}`);
+    const response = await axios.get<Character[]>(
+      `${characterUrl}&access_token=${token}`,
+    );
     return response.data;
   } catch (e) {
     logger.error({
@@ -84,35 +83,40 @@ async function getCharacterInfo(token: string): Promise<Character[]> {
 }
 
 interface Information {
-  guild?: GuildInformation,
-  characters: Character[]
+  guild?: GuildInformation;
+  characters: Character[];
+}
+
+interface Account {
+  token: string;
+  name: string;
+  activeCharacterName: string;
 }
 
 let currentInformation: Information = {
   guild: undefined,
   characters: [],
-}
+};
 
 // compare in an interval
-async function update(): Promise<void>{
-  let newInformation: Information = {
+async function update(): Promise<void> {
+  const newInformation: Information = {
     guild: undefined,
-    characters: []
-  }
+    characters: [],
+  };
 
   // All calls are made here
   newInformation.guild = await getGuildInformation();
   if (!newInformation.guild) return;
 
   for (const account of config.guildWarsAccounts) {
-
-    const characters = await getCharacterInfo(account.token);
+    const characters = await getCharacterInfo(account.token as string);
     if (!characters) continue;
 
     for (const character of characters) {
       if (character.name === account.activeCharacterName) {
         newInformation.characters.push(character);
-      }    
+      }
     }
   }
 
@@ -139,7 +143,5 @@ async function update(): Promise<void>{
 }
 
 function informationHasChanged(newInformation: Information) {
-  return (
-    JSON.stringify(newInformation) !== JSON.stringify(currentInformation)
-  );
+  return JSON.stringify(newInformation) !== JSON.stringify(currentInformation);
 }
