@@ -1,4 +1,5 @@
 # Discord Bot
+[![check workflow](https://github.com/RadicalDreamer-Code/gw2-guild-check-discord-bot/actions/workflows/check.yml/badge.svg)](https://github.com/RadicalDreamer-Code/gw2-guild-check-discord-bot/actions/workflows/check.yml)
 
 
 ## Installation
@@ -14,11 +15,11 @@ A config.json needs to be created in src/ with following values:
 
 ```json
 {
-	"token": "",
-    "discordGuild": "",
-    "guildWarsChannel": "",
-    "guildWarsToken": "",
-    "guildWarsGuildId": ""
+  "token": "",
+  "discordGuild": "",
+  "guildWarsChannel": "",
+  "guildWarsToken": "",
+  "guildWarsGuildId": ""
 }
 ```
 
