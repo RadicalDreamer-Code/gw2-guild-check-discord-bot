@@ -15,7 +15,10 @@ client.once('ready', async () => {
 
   // Start Information Interval
   const INTERVAL_TIME = 60000; // every hour
-  let interval = setInterval(sendMessageIfInformationHasChanged, INTERVAL_TIME);
+  const interval = setInterval(
+    sendMessageIfInformationHasChanged,
+    INTERVAL_TIME,
+  );
 });
 
 // data: GuildInformation
