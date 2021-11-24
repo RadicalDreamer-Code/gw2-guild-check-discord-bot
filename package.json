@@ -8,8 +8,8 @@
     "build": "tsc",
     "start:prod": "npm run build && node dist/src/main.js",
     "start:dev": "ts-node-dev src/main.ts",
-    "lint": "eslint src/*.ts --fix",
-    "format": "prettier --write src/*.ts"
+    "lint": "eslint src/**/*.ts --fix",
+    "format": "prettier --write src/**/*.ts"
   },
   "author": "",
   "license": "ISC",
