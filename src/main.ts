@@ -1,4 +1,10 @@
-import { Intents, Client, MessageEmbed, TextChannel } from 'discord.js';
+import {
+  Intents,
+  Client,
+  MessageEmbed,
+  TextChannel,
+  Message,
+} from 'discord.js';
 import config from '../config.json';
 import logger from './logger';
 import axios from 'axios';
@@ -8,9 +14,7 @@ import { Character } from './interfaces/character.interface';
 // Discord Bot
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 let textChannel: TextChannel;
-
-// TODO: this needs to be typed or changed overal, mainly used for caching data, this can be handlede in other ways
-let guildInfoMessage;
+let guildInfoMessage: Message;
 
 client.once('ready', async () => {
   console.log('Ready');
@@ -23,7 +27,7 @@ client.once('ready', async () => {
   const interval = setInterval(update, INTERVAL_TIME_ONE_HOUR);
 });
 
-function createEmbedMessage(data: Information) {
+function createEmbedMessage(data: Information): MessageEmbed {
   const activePlayers = data.characters
     .map((character) => {
       return `${character.name} (${character.profession}) \n Level: ${character.level} Deaths: ${character.deaths} \n\n`;
@@ -87,12 +91,6 @@ interface Information {
   characters: Character[];
 }
 
-interface Account {
-  token: string;
-  name: string;
-  activeCharacterName: string;
-}
-
 let currentInformation: Information = {
   guild: undefined,
   characters: [],
@@ -133,7 +131,7 @@ async function update(): Promise<void> {
     if (!guildInfoMessage) {
       await textChannel.send({ embeds: [embedMessage] });
     } else {
-      await guildInfoMessage.edit(embedMessage);
+      await guildInfoMessage.edit({ embeds: [embedMessage] });
     }
 
     logger.info({
