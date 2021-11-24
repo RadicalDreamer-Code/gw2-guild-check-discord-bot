@@ -6,6 +6,7 @@ import axios from "axios";
 // Discord Bot
 const client = new Discord.Client({ intents: [Intents.FLAGS.GUILDS] });
 let channel;
+let guildInfoMessage;
 
 client.once("ready", async () => {
     console.log("Ready")
@@ -18,17 +19,15 @@ client.once("ready", async () => {
 });
 
 // data: GuildInformation
-function sendEmbedMessage(data) {
-    const embed = new Discord.MessageEmbed()
-    .setTitle(`${data.name} [${data.tag}]`)
-    .setColor('#DAF7A6')
-    .addFields(
-        {name: 'Message of the day', value: data.motd},
-        {name: 'Level', value: data.level.toString()},
-        {name: 'Members', value: data.member_count.toString()}
-    )
-
-    channel.send({embeds: [embed]})
+function createEmbedMessage(data) {
+    return new Discord.MessageEmbed()
+            .setTitle(`${data.name} [${data.tag}]`)
+            .setColor('#DAF7A6')
+            .addFields(
+                {name: 'Message of the day', value: data.motd},
+                {name: 'Level', value: data.level.toString()},
+                {name: 'Members', value: data.member_count.toString()}
+            )
 }
 
 client.login(config.token);
@@ -71,10 +70,16 @@ async function sendMessageIfInformationHasChanged() {
     if(!guildInformationIsUnchanged(guildInfo)) {
         console.log("Info has changed")
         currentGuildInformation = guildInfo;
-        sendEmbedMessage(guildInfo)
+
+        if (!guildInfoMessage)
+            await channel.send({embeds: [createEmbedMessage(guildInfo)]})
+        else
+            await guildInfoMessage.edit(createEmbedMessage(guildInfo))
+
         logger.info({
-            message: "New Guild Information has been posted to Discord"
+            message: "Guild Information has been updated on Discord"
         })
+
         return
     }
 }
