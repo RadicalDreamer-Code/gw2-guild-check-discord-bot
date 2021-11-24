@@ -1,5 +1,4 @@
-import winston from 'winston';
-const { createLogger, format, transports } = winston;
+import { createLogger, format, transports } from "winston";
 
 const logger = createLogger({
   level: 'info',
@@ -15,6 +14,8 @@ const logger = createLogger({
   transports: [new transports.File({ filename: 'error.log', level: 'error' })],
 });
 
+// TODO: this should not be used as a side effice
+// put this into a class init or something similar or handle it in another place
 if (process.env.NODE_ENV !== 'production') {
   logger.add(
     new transports.Console({

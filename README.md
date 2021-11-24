@@ -25,7 +25,8 @@ A config.json needs to be created in src/ with following values:
 
 ## Start / Develop
 ```sh
-$ npm run start
+$ npm run start:prod
+$ npm run start:dev
 
 $ npm run lint
 $ npm run format

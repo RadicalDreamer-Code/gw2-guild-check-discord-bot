@@ -1,10 +1,10 @@
-import Discord, { Intents } from 'discord.js';
+import { Intents, Client, MessageEmbed } from 'discord.js';
 import config from '../config.json';
 import logger from './logger.js';
 import axios from 'axios';
 
 // Discord Bot
-const client = new Discord.Client({ intents: [Intents.FLAGS.GUILDS] });
+const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 let channel;
 let guildInfoMessage;
 
@@ -20,7 +20,7 @@ client.once('ready', async () => {
 
 // data: GuildInformation
 function createEmbedMessage(data) {
-  return new Discord.MessageEmbed()
+  return new MessageEmbed()
     .setTitle(`${data.name} [${data.tag}]`)
     .setColor('#DAF7A6')
     .addFields(
