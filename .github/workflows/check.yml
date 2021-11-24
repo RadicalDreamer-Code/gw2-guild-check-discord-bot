@@ -27,6 +27,8 @@ jobs:
         run: |
           echo '{ "token": "", "discordGuild": "", "guildWarsChannel": "", "guildWarsToken": "", "guildWarsGuildId": "", "guildWarsAccounts": [] }' \
               > src/config.json
+          ls
+          ls src
           npm run build
 
 
