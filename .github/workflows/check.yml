@@ -24,4 +24,9 @@ jobs:
         run: npm run lint:check
 
       - name: Check compilation
-        run: npm run build
+        run: |
+          echo '{ "token": "", "discordGuild": "", "guildWarsChannel": "", "guildWarsToken": "", "guildWarsGuildId": "", "guildWarsAccounts": [] }' \
+              > src/config.json
+          npm run build
+
+
