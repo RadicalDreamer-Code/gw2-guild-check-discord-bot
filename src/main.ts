@@ -14,7 +14,7 @@ let guildInfoMessage: string;
 client.once('ready', async () => {
   console.log('Ready');
   // Get right channel
-  const channel = client.channels.cache.get(config.guildWarsChannel)
+  const channel = client.channels.cache.get(config.guildWarsChannel);
   textChannel = channel as TextChannel;
 
   // Start Information Interval
