@@ -37,6 +37,8 @@ function createEmbedMessage(data: Information): MessageEmbed {
       return `${character.name} (${character.profession}) \n Level: ${character.level} Deaths: ${character.deaths} \n\n`;
     })
     .join('');
+
+  // TODO: incrementally build addFields dependend on given data (character > 0 etc.)
   return new MessageEmbed()
     .setTitle(`${data.guild.name} [${data.guild.tag}]`)
     .setColor('#DAF7A6')
@@ -44,7 +46,7 @@ function createEmbedMessage(data: Information): MessageEmbed {
       { name: 'Message of the day', value: data.guild.motd },
       { name: 'Level', value: data.guild.level.toString() },
       { name: 'Members', value: data.guild.member_count.toString() },
-      { name: 'Active Players', value: activePlayers },
+      { name: 'Active Players', value: activePlayers || 'no data' },
     );
 }
 
@@ -83,12 +85,9 @@ async function update(): Promise<void> {
     }
   }
 
-  // console.log(newInformation.characters)
-
   // Compare all response -> update if changed
   if (informationHasChanged(newInformation)) {
     currentInformation = newInformation;
-
     const embedMessage = createEmbedMessage(newInformation);
 
     // TODO: this should be handled inside the interface, maybe convert it to a normal class for these kinds of actions
