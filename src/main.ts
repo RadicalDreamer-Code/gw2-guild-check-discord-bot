@@ -9,12 +9,12 @@ const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 let textChannel: TextChannel;
 
 // TODO: this needs to be typed or changed overal, mainly used for caching data, this can be handlede in other ways
-let guildInfoMessage;
+let guildInfoMessage: string;
 
 client.once('ready', async () => {
   console.log('Ready');
   // Get right channel
-  const channel = client.channels.cache.get(config.guildWarsChannel);
+  const channel = client.channels.cache.get(config.guildWarsChannel)
   textChannel = channel as TextChannel;
 
   // Start Information Interval
