@@ -1,7 +1,7 @@
 name: Check
 on:
   push:
-    branches: [ github-action ]
+    branches: [ main ]
 
 jobs:
   checks:
