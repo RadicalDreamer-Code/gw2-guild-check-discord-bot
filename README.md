@@ -8,9 +8,19 @@ $ npm install
 ```
 
 
-### Discord Credentials
+### Discord Credentials and Guild Wars 2 Information
 
-Here data about config data etc.
+A config.json needs to be created in src/ with following values:
+
+```json
+{
+	"token": "",
+    "discordGuild": "",
+    "guildWarsChannel": "",
+    "guildWarsToken": "",
+    "guildWarsGuildId": ""
+}
+```
 
 
 ## Start / Develop
