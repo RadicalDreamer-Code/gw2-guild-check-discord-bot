@@ -7,9 +7,9 @@ import {
 } from 'discord.js';
 import config from '../config.json';
 import logger from './logger';
-import axios from 'axios';
 import { GuildInformation } from './interfaces/guild-information.interface';
 import { Character } from './interfaces/character.interface';
+import { getCharacterInfo, getGuildInformation } from './gw2.service';
 
 // Discord Bot
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
@@ -23,7 +23,7 @@ client.once('ready', async () => {
   textChannel = channel as TextChannel;
 
   // Start Information Interval
-  const INTERVAL_TIME_ONE_HOUR = 3600000;
+    const INTERVAL_TIME_ONE_HOUR = 3600000;
   const interval = setInterval(update, INTERVAL_TIME_ONE_HOUR);
 });
 
@@ -47,45 +47,6 @@ function createEmbedMessage(data: Information): MessageEmbed {
 client.login(config.token);
 
 // Guild Wars 2 Part
-const guildUrl = `https://api.guildwars2.com/v2/guild/${config.guildWarsGuildId}/`;
-const gwAxios = axios.create({
-  headers: {
-    Authorization: `Bearer ${config.guildWarsToken}`,
-  },
-});
-
-async function getGuildInformation() {
-  try {
-    const response = await gwAxios.get<GuildInformation>(guildUrl);
-    return response.data;
-  } catch (e) {
-    logger.error({
-      message: "Guild Wars API couldn't get called",
-    });
-    return;
-  }
-}
-
-async function getGuildEmblem() {
-  //TODO: Show Guild Emblem on Discord
-}
-
-const characterUrl = `https://api.guildwars2.com/v2/characters?ids=all`;
-async function getCharacterInfo(token: string): Promise<Character[]> {
-  //TODO: Get Character Info
-  try {
-    const response = await axios.get<Character[]>(
-      `${characterUrl}&access_token=${token}`,
-    );
-    return response.data;
-  } catch (e) {
-    logger.error({
-      message: "Guild Wars API couldn't get called",
-    });
-    return;
-  }
-}
-
 interface Information {
   guild?: GuildInformation;
   characters: Character[];
