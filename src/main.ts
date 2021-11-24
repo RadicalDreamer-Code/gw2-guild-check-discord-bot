@@ -2,10 +2,14 @@ import { Intents, Client, MessageEmbed } from 'discord.js';
 import config from '../config.json';
 import logger from './logger';
 import axios from 'axios';
+import { GuildInformation } from './interfaces/guild-information.interface';
 
 // Discord Bot
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
+// TODO: this needs a type, but we use the "send" function which seems to work but not have type hinting
+//       probably need to call it correctly (send is most likely depricated)
 let channel;
+// TODO: this needs to be typed or changed overal, mainly used for caching data, this can be handlede in other ways
 let guildInfoMessage;
 
 client.once('ready', async () => {
@@ -22,7 +26,7 @@ client.once('ready', async () => {
 });
 
 // data: GuildInformation
-function createEmbedMessage(data) {
+function createEmbedMessage(data: GuildInformation) {
   return new MessageEmbed()
     .setTitle(`${data.name} [${data.tag}]`)
     .setColor('#DAF7A6')
@@ -45,7 +49,7 @@ const gwAxios = axios.create({
 
 async function getGuildInformation() {
   try {
-    const response = await gwAxios.get(guildUrl);
+    const response = await gwAxios.get<GuildInformation>(guildUrl);
     return response.data;
   } catch (e) {
     logger.error({
@@ -60,7 +64,7 @@ async function getGuildEmblem() {
 }
 
 // compare in an interval
-let currentGuildInformation = {};
+let currentGuildInformation: GuildInformation;
 
 async function sendMessageIfInformationHasChanged() {
   // Request
@@ -69,13 +73,18 @@ async function sendMessageIfInformationHasChanged() {
   if (!guildInfo) return;
 
   // Compare
+  // TODO: this should be handled inside the interface, maybe convert it to a normal class for these kinds of actions
+  // meaning for handling formatting etc as well
   if (!guildInformationIsUnchanged(guildInfo)) {
     console.log('Info has changed');
     currentGuildInformation = guildInfo;
 
-    if (!guildInfoMessage)
-      await channel.send({ embeds: [createEmbedMessage(guildInfo)] });
-    else await guildInfoMessage.edit(createEmbedMessage(guildInfo));
+    const embedMessage = createEmbedMessage(guildInfo);
+    if (!guildInfoMessage) {
+      await channel.send({ embeds: [embedMessage] });
+    } else {
+      await guildInfoMessage.edit(embedMessage);
+    }
 
     logger.info({
       message: 'Guild Information has been updated on Discord',
@@ -85,7 +94,7 @@ async function sendMessageIfInformationHasChanged() {
   }
 }
 
-function guildInformationIsUnchanged(newInformation) {
+function guildInformationIsUnchanged(newInformation: GuildInformation) {
   return (
     JSON.stringify(newInformation) === JSON.stringify(currentGuildInformation)
   );
