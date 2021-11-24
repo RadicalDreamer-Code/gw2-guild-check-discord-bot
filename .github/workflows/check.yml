@@ -23,14 +23,10 @@ jobs:
       - name: Check linting
         run: npm run lint:check
 
-      - name: Create dummy config file
+      - name: Check compilation
         run: |
           echo '{ "token": "", "discordGuild": "", "guildWarsChannel": "", "guildWarsToken": "", "guildWarsGuildId": "", "guildWarsAccounts": [] }' \
-              > src/config.json
-          ls src
-          cat src/config.json
-
-      - name: Check compilation
-        run: npm run build
+              > config.json
+          npm run build
 
 
