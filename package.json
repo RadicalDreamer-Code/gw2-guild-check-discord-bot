@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
-    "start:prod": "npm run build && node dist/src/main.js",
+    "start:prod": "npm run build && cross-env NODE_ENV=production node dist/src/main.js",
     "start:dev": "ts-node-dev src/main.ts",
     "lint": "eslint --fix \"src/**/*.ts\"",
     "lint:check": "eslint \"src/**/*.ts\"",
@@ -23,6 +23,7 @@
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
+    "cross-env": "^7.0.3",
     "eslint": "^8.3.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",

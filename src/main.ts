@@ -16,15 +16,19 @@ const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 let textChannel: TextChannel;
 let guildInfoMessage: Message;
 
+logger.info('Discord-Bot Service started');
 client.once('ready', async () => {
-  console.log('Ready');
-  // Get right channel
+  logger.info('Discord-Bot is ready');
   const channel = client.channels.cache.get(config.guildWarsChannel);
   textChannel = channel as TextChannel;
 
-  // Start Information Interval
+  if (process.env.NODE_ENV === 'production') {
     const INTERVAL_TIME_ONE_HOUR = 3600000;
-  const interval = setInterval(update, INTERVAL_TIME_ONE_HOUR);
+    setInterval(update, INTERVAL_TIME_ONE_HOUR);
+  } else {
+    logger.info('Dev-Mode activated!');
+    await update();
+  }
 });
 
 function createEmbedMessage(data: Information): MessageEmbed {
