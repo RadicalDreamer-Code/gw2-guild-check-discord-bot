@@ -1,7 +1,7 @@
 name: Check
 on:
   push:
-    branches: [ main, tsc-check ]
+    branches: [ main ]
 
 jobs:
   checks:
