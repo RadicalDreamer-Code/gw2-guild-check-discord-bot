@@ -1,31 +1,24 @@
 import Discord, {Intents} from "discord.js"
 import config from "./config.json"
+import logger from "./logger.js";
 import axios from "axios";
 
 // Discord Bot
 const client = new Discord.Client({ intents: [Intents.FLAGS.GUILDS] });
+let channel;
 
 client.once("ready", async () => {
     console.log("Ready")
     // Get right channel
-    const channel = client.channels.cache.get(config.guildWarsChannel);
-    await getGuildInformation(channel);
+    channel = client.channels.cache.get(config.guildWarsChannel);
+
+    // Start Information Interval
+    const INTERVAL_TIME = 60000 // every hour
+    let interval = setInterval(sendMessageIfInformationHasChanged, INTERVAL_TIME);
 });
 
-client.login(config.token);
-
-// Guild Wars 2 Part
-const guildUrl = `https://api.guildwars2.com/v2/guild/${config.guildWarsGuildId}/`;
-const gwAxios = axios.create({
-    headers: {
-        "Authorization": `Bearer ${config.guildWarsToken}`
-    }
-})
-
-async function getGuildInformation(channel) {
-    const response = await gwAxios.get(guildUrl)
-    const data = response.data
-
+// data: GuildInformation
+function sendEmbedMessage(data) {
     const embed = new Discord.MessageEmbed()
     .setTitle(`${data.name} [${data.tag}]`)
     .setColor('#DAF7A6')
@@ -38,6 +31,54 @@ async function getGuildInformation(channel) {
     channel.send({embeds: [embed]})
 }
 
-async function getGuildEmblem() {
+client.login(config.token);
 
+// Guild Wars 2 Part
+const guildUrl = `https://api.guildwars2.com/v2/guild/${config.guildWarsGuildId}/`;
+const gwAxios = axios.create({
+    headers: {
+        "Authorization": `Bearer ${config.guildWarsToken}`
+    }
+})
+
+async function getGuildInformation() {
+    try {
+        const response = await gwAxios.get(guildUrl)
+        return response.data
+    } catch(e) {
+        logger.error({
+            message: "Guild Wars API couldn't get called"
+        })
+        return
+    }
+}
+
+async function getGuildEmblem() {
+    //TODO: Show Guild Emblem on Discord
+}
+
+// compare in an interval
+let currentGuildInformation = {}
+
+async function sendMessageIfInformationHasChanged() {
+    // Request
+    const guildInfo = await getGuildInformation()
+    // if undefined / nothing changed
+    if (!guildInfo)
+    return
+    
+    // Compare
+    if(!guildInformationIsUnchanged(guildInfo)) {
+        console.log("Info has changed")
+        currentGuildInformation = guildInfo;
+        sendEmbedMessage(guildInfo)
+        logger.info({
+            message: "New Guild Information has been posted to Discord"
+        })
+        return
+    }
+}
+
+function guildInformationIsUnchanged(newInformation) {
+    return JSON.stringify(newInformation) === JSON.stringify(currentGuildInformation)
 }
