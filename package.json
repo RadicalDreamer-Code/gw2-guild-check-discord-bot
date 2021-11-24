@@ -2,14 +2,14 @@
   "name": "guildwarsbot",
   "version": "1.0.0",
   "description": "",
-  "main": "main.js",
+  "main": "src/main.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "start:prod": "npm run build && node dist/src/main.js",
-    "start:dev": "ts-node-dev src/main.js",
-    "lint": "eslint src/*.js --fix",
-    "format": "prettier --write src/*.js"
+    "start:dev": "ts-node-dev src/main.ts",
+    "lint": "eslint src/*.ts --fix",
+    "format": "prettier --write src/*.ts"
   },
   "author": "",
   "license": "ISC",

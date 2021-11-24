@@ -1,6 +1,6 @@
 import { Intents, Client, MessageEmbed } from 'discord.js';
 import config from '../config.json';
-import logger from './logger.js';
+import logger from './logger';
 import axios from 'axios';
 
 // Discord Bot
