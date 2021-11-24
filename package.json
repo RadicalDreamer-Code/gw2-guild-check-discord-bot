@@ -9,7 +9,9 @@
     "start:prod": "npm run build && node dist/src/main.js",
     "start:dev": "ts-node-dev src/main.ts",
     "lint": "eslint --fix \"src/**/*.ts\"",
-    "format": "prettier --write \"src/**/*.ts\""
+    "lint:check": "eslint \"src/**/*.ts\"",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\""
   },
   "author": "",
   "license": "ISC",
