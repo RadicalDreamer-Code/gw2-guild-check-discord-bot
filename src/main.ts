@@ -3,6 +3,7 @@ import config from '../config.json';
 import logger from './logger';
 import axios from 'axios';
 import { GuildInformation } from './interfaces/guild-information.interface';
+import { Character } from './interfaces/character.interface';
 
 // Discord Bot
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
@@ -18,22 +19,27 @@ client.once('ready', async () => {
   channel = client.channels.cache.get(config.guildWarsChannel);
 
   // Start Information Interval
-  const INTERVAL_TIME = 60000; // every hour
+  const INTERVAL_TIME_ONE_HOUR = 3600000
   const interval = setInterval(
-    sendMessageIfInformationHasChanged,
-    INTERVAL_TIME,
+    update,
+    INTERVAL_TIME_ONE_HOUR,
   );
 });
 
-// data: GuildInformation
-function createEmbedMessage(data: GuildInformation) {
+function createEmbedMessage(data: Information) {
+  const activePlayers = data.characters.map((character) => {
+    return (
+      `${character.name} (${character.profession}) \n Level: ${character.level} Deaths: ${character.deaths} \n\n`
+    )
+  }).join(""); 
   return new MessageEmbed()
-    .setTitle(`${data.name} [${data.tag}]`)
+    .setTitle(`${data.guild.name} [${data.guild.tag}]`)
     .setColor('#DAF7A6')
     .addFields(
-      { name: 'Message of the day', value: data.motd },
-      { name: 'Level', value: data.level.toString() },
-      { name: 'Members', value: data.member_count.toString() },
+      { name: 'Message of the day', value: data.guild.motd },
+      { name: 'Level', value: data.guild.level.toString() },
+      { name: 'Members', value: data.guild.member_count.toString() },
+      { name: 'Active Players', value: activePlayers}
     );
 }
 
@@ -63,23 +69,63 @@ async function getGuildEmblem() {
   //TODO: Show Guild Emblem on Discord
 }
 
+const characterUrl = `https://api.guildwars2.com/v2/characters?ids=all`
+async function getCharacterInfo(token: string): Promise<Character[]> {
+  //TODO: Get Character Info
+  try {
+    const response = await axios.get<Character[]>(`${characterUrl}&access_token=${token}`);
+    return response.data;
+  } catch (e) {
+    logger.error({
+      message: "Guild Wars API couldn't get called",
+    });
+    return;
+  }
+}
+
+interface Information {
+  guild?: GuildInformation,
+  characters: Character[]
+}
+
+let currentInformation: Information = {
+  guild: undefined,
+  characters: [],
+}
+
 // compare in an interval
-let currentGuildInformation: GuildInformation;
+async function update(): Promise<void>{
+  let newInformation: Information = {
+    guild: undefined,
+    characters: []
+  }
 
-async function sendMessageIfInformationHasChanged() {
-  // Request
-  const guildInfo = await getGuildInformation();
-  // if undefined / nothing changed
-  if (!guildInfo) return;
+  // All calls are made here
+  newInformation.guild = await getGuildInformation();
+  if (!newInformation.guild) return;
 
-  // Compare
-  // TODO: this should be handled inside the interface, maybe convert it to a normal class for these kinds of actions
-  // meaning for handling formatting etc as well
-  if (!guildInformationIsUnchanged(guildInfo)) {
-    console.log('Info has changed');
-    currentGuildInformation = guildInfo;
+  for (const account of config.guildWarsAccounts) {
 
-    const embedMessage = createEmbedMessage(guildInfo);
+    const characters = await getCharacterInfo(account.token);
+    if (!characters) continue;
+
+    for (const character of characters) {
+      if (character.name === account.activeCharacterName) {
+        newInformation.characters.push(character);
+      }    
+    }
+  }
+
+  // console.log(newInformation.characters)
+
+  // Compare all response -> update if changed
+  if (informationHasChanged(newInformation)) {
+    currentInformation = newInformation;
+
+    const embedMessage = createEmbedMessage(newInformation);
+
+    // TODO: this should be handled inside the interface, maybe convert it to a normal class for these kinds of actions
+    // meaning for handling formatting etc as well
     if (!guildInfoMessage) {
       await channel.send({ embeds: [embedMessage] });
     } else {
@@ -89,13 +135,11 @@ async function sendMessageIfInformationHasChanged() {
     logger.info({
       message: 'Guild Information has been updated on Discord',
     });
-
-    return;
   }
 }
 
-function guildInformationIsUnchanged(newInformation: GuildInformation) {
+function informationHasChanged(newInformation: Information) {
   return (
-    JSON.stringify(newInformation) === JSON.stringify(currentGuildInformation)
+    JSON.stringify(newInformation) !== JSON.stringify(currentInformation)
   );
 }
