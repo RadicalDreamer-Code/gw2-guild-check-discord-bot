@@ -1,4 +1,4 @@
-import { Intents, Client, MessageEmbed } from 'discord.js';
+import { Intents, Client, MessageEmbed, TextChannel } from 'discord.js';
 import config from '../config.json';
 import logger from './logger';
 import axios from 'axios';
@@ -7,16 +7,16 @@ import { Character } from './interfaces/character.interface';
 
 // Discord Bot
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
-// TODO: this needs a type, but we use the "send" function which seems to work but not have type hinting
-//       probably need to call it correctly (send is most likely depricated)
-let channel;
+let textChannel: TextChannel;
+
 // TODO: this needs to be typed or changed overal, mainly used for caching data, this can be handlede in other ways
 let guildInfoMessage;
 
 client.once('ready', async () => {
   console.log('Ready');
   // Get right channel
-  channel = client.channels.cache.get(config.guildWarsChannel);
+  const channel = client.channels.cache.get(config.guildWarsChannel);
+  textChannel = channel as TextChannel;
 
   // Start Information Interval
   const INTERVAL_TIME_ONE_HOUR = 3600000
@@ -127,7 +127,7 @@ async function update(): Promise<void>{
     // TODO: this should be handled inside the interface, maybe convert it to a normal class for these kinds of actions
     // meaning for handling formatting etc as well
     if (!guildInfoMessage) {
-      await channel.send({ embeds: [embedMessage] });
+      await textChannel.send({ embeds: [embedMessage] });
     } else {
       await guildInfoMessage.edit(embedMessage);
     }
