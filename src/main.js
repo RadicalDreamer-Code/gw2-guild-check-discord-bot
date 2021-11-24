@@ -1,5 +1,5 @@
 import Discord, { Intents } from 'discord.js';
-import config from './config.json';
+import config from '../config.json';
 import logger from './logger.js';
 import axios from 'axios';
 
