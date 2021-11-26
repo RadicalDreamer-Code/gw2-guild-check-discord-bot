@@ -34,7 +34,13 @@ client.once('ready', async () => {
 function createEmbedMessage(data: Information): MessageEmbed {
   const activePlayers = data.characters
     .map((character) => {
-      return `${character.name} (${character.profession}) \n Level: ${character.level} Deaths: ${character.deaths} \n\n`;
+      const jobs = character.crafting.map((job) =>
+        job.active ? `${job.discipline} (${job.rating}), ` : null,
+      );
+
+      return `${character.name} (${character.profession})
+              Jobs: ${jobs.length <= 0 ? 'None' : jobs}
+              Level: ${character.level} Deaths: ${character.deaths} \n\n`;
     })
     .join('');
 

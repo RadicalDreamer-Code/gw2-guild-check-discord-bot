@@ -9,10 +9,16 @@ export class Character {
   age: number;
   created: string; //	"2021-11-22T16:24:00Z"
   deaths: number;
-  crafting: unknown;
+  crafting: Crafting[];
   backstory: unknown;
   ww_abilities: unknown;
   equipment: unknown;
   recipes: unknown;
   bags: unknown;
+}
+
+class Crafting {
+  discipline: string;
+  rating: number;
+  active: true;
 }
