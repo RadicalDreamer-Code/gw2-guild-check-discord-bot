@@ -96,6 +96,13 @@ async function update(): Promise<void> {
     currentInformation = newInformation;
     const embedMessage = createEmbedMessage(newInformation);
 
+    // TODO: this should be handled at a higher abstraction level
+    // QUICKFIX: do not spam the live server, only console log on development
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(embedMessage);
+      return;
+    }
+
     // TODO: this should be handled inside the interface, maybe convert it to a normal class for these kinds of actions
     // meaning for handling formatting etc as well
     if (!guildInfoMessage) {
