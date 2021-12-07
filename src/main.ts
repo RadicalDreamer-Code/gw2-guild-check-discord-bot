@@ -31,14 +31,17 @@ client.once('ready', async () => {
 });
 
 function createEmbedMessage(data: Information): MessageEmbed {
+
   const activePlayers = data.characters
     .map((character) => {
-      const jobs = character.crafting.map((job) =>
-        job.active ? `${job.discipline} (${job.rating}), ` : null,
-      );
+      const jobsArray = character.crafting.map((job) => {
+        return job.active ? `${job.discipline} (${job.rating})` : null;
+      });
+
+      const jobsString = jobsArray.join(', ');
 
       return `${character.name} (${character.profession})
-              Jobs: ${jobs.length <= 0 ? 'None' : jobs}
+              Jobs: ${jobsArray.length <= 0 ? 'None' : jobsString}
               Level: ${character.level} Deaths: ${character.deaths} \n\n`;
     })
     .join('');
