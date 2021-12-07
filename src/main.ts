@@ -7,9 +7,8 @@ import {
 } from 'discord.js';
 import config from '../config.json';
 import logger from './logger';
-import { GuildInformation } from './interfaces/guild-information.interface';
-import { Character } from './interfaces/character.interface';
 import { getCharacterInfo, getGuildInformation } from './gw2.service';
+import { Information } from './interfaces/information.interface';
 
 // Discord Bot
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
@@ -59,11 +58,6 @@ function createEmbedMessage(data: Information): MessageEmbed {
 client.login(config.token);
 
 // Guild Wars 2 Part
-interface Information {
-  guild?: GuildInformation;
-  characters: Character[];
-}
-
 let currentInformation: Information = {
   guild: undefined,
   characters: [],
