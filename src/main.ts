@@ -31,7 +31,6 @@ client.once('ready', async () => {
 });
 
 function createEmbedMessage(data: Information): MessageEmbed {
-
   const activePlayers = data.characters
     .map((character) => {
       const jobsArray = character.crafting.map((job) => {
