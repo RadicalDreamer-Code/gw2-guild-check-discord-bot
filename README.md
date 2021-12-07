@@ -20,7 +20,13 @@ A config.json needs to be created in src/ with following values:
   "guildWarsChannel": "",
   "guildWarsToken": "",
   "guildWarsGuildId": "",
-  "guildWarsAccounts": []
+  "guildWarsAccounts": [
+      {
+        "token": "...",
+        "activeCharacterName": "..."
+      },
+      { ... }
+  ]
 }
 ```
 
