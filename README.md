@@ -24,8 +24,7 @@ A config.json needs to be created in src/ with following values:
       {
         "token": "...",
         "activeCharacterName": "..."
-      },
-      { ... }
+      }
   ]
 }
 ```
