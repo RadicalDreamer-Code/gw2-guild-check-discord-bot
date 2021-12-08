@@ -106,11 +106,13 @@ async function update(): Promise<void> {
         const messageId = config.discordMessageId;
         const oldMessage = await textChannel.messages.fetch(messageId);
         oldMessage.edit({ embeds: [embedMessage] });
-        logger.info({message: 'Message was edited'})
+        logger.info({ message: 'Message was edited' });
       } catch (e) {
         // if we do not have already a message, post the first one
         await textChannel.send({ embeds: [embedMessage] });
-        logger.info({message: 'Message was created because no old message found'})
+        logger.info({
+          message: 'Message was created because no old message found',
+        });
       }
     } else {
       await guildInfoMessage.edit({ embeds: [embedMessage] });
