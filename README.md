@@ -13,10 +13,13 @@ $ npm install
 
 A config.json needs to be created in src/ with following values:
 
+- messageId can be taken from the first message that was send in the channel
+
 ```json
 {
   "token": "",
   "discordGuild": "",
+  "discordMessageId": "",
   "guildWarsChannel": "",
   "guildWarsToken": "",
   "guildWarsGuildId": "",

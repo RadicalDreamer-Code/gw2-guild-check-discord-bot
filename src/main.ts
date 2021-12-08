@@ -102,7 +102,16 @@ async function update(): Promise<void> {
     // TODO: this should be handled inside the interface, maybe convert it to a normal class for these kinds of actions
     // meaning for handling formatting etc as well
     if (!guildInfoMessage) {
-      await textChannel.send({ embeds: [embedMessage] });
+      try {
+        const messageId = config.discordMessageId;
+        const oldMessage = await textChannel.messages.fetch(messageId);
+        oldMessage.edit({ embeds: [embedMessage] });
+        logger.info({message: 'Message was edited'})
+      } catch (e) {
+        // if we do not have already a message, post the first one
+        await textChannel.send({ embeds: [embedMessage] });
+        logger.info({message: 'Message was created because no old message found'})
+      }
     } else {
       await guildInfoMessage.edit({ embeds: [embedMessage] });
     }
